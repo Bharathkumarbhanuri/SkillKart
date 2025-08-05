@@ -11,18 +11,20 @@ import Checkout from './pages/Checkout';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
+import Orders from './pages/Orders';
 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<MainLayout/>} >
       <Route index element={<Home/>} />
-      <Route path='productdetails' element={<ProductDetails/>} />
+      <Route path='productdetails/:productid' element={<ProductDetails/>} />
       <Route path='cart' element={<Cart/>} />
       <Route path='checkout' element={<Checkout/>} />
       <Route path='login' element={<Login/>} />
       <Route path='signup' element={<Signup/>} />
       <Route path='profile' element={<Profile/>} />
+      <Route path='orders' element={<Orders/>} />
     </Route>
   )
 )

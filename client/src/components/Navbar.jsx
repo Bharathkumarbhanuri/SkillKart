@@ -1,16 +1,32 @@
 import React from 'react'
-import {NavLink} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { FaShoppingCart, FaClipboardList, FaBell} from 'react-icons/fa';
+import Search from './Search';
+import ProfileSidebar from './ProfileSidebar';
 
 function Navbar() {
     return (
-        <nav className='bg-white text-black font-semibold shadow-lg p-4'>
-            <NavLink className={({isActive})=>isActive ? "text-blue-600 px-8": "px-8"} to="/" >Home</NavLink>
-            <NavLink className={({isActive})=>isActive ? "text-blue-600 px-8": "px-8"} to="productdetails" >Product Details</NavLink>
-            <NavLink className={({isActive})=>isActive ? "text-blue-600 px-8": "px-8"} to="cart" >Cart</NavLink>
-            <NavLink className={({isActive})=>isActive ? "text-blue-600 px-8": "px-8"} to="checkout" >Checkout</NavLink>
-            <NavLink className={({isActive})=>isActive ? "text-blue-600 px-8": "px-8"} to="login" >Login</NavLink>
-            <NavLink className={({isActive})=>isActive ? "text-blue-600 px-8": "px-8"} to="signup" >Signup</NavLink>
-            <NavLink className={({isActive})=>isActive ? "text-blue-600 px-8": "px-8"} to="profile" >Profile</NavLink>
+        <nav className='bg-white flex min-w-fit items-center text-black shadow-lg p-4 gap-12'>
+            <p className='text-3xl font-semibold px-6'>SkillKart</p>
+
+            <NavLink  to="/cart" className='' >
+                Explore
+            </NavLink>
+            <div className='w-full'>
+                <Search />
+            </div>
+
+            <NavLink  to="/cart" className='flex items-center' >
+                <button className='flex items-center text-2xl'><FaShoppingCart className='text-2xl mr-2' />cart</button>
+            </NavLink>
+            <NavLink  to="/orders" className='flex items-center' >
+                <button className='flex items-center text-2xl'><FaClipboardList className='text-2xl mr-2' />orders</button>
+            </NavLink>
+            <NavLink  to="/orders" className='flex items-center' >
+                <button className='flex items-center text-2xl'><FaBell className='text-2xl mr-2' /></button>
+            </NavLink>
+
+            <ProfileSidebar />
         </nav>
     )
 }
