@@ -26,7 +26,7 @@ function Home() {
         <div>
             <HeroSection />
             <div id="courses" className='my-10 px-6'>
-                <h2 className='text-2xl font-bold mb-4 text-center'>Featured Courses</h2>
+                <h2 className='text-3xl font-bold mb-4 text-center'>Featured Courses</h2>
 
                 {/* course cards */}
 
@@ -37,10 +37,11 @@ function Home() {
                         {courses.map((course)=>(
                             <CourseCard 
                                 key={course.id}
+                                id={course.id}
                                 title={course.title}
                                 description={course.description}
                                 price={course.price}
-                                image={course.image}
+                                image={course.image_url}
                             />
                         ))}
                     </div>

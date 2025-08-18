@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const CourseCard = ({ title, description, price, image }) => {
+
+const CourseCard = ({ id, title, description, price, image }) => {
+    const navigate = useNavigate();
     return (
         <div className='border p-4 rounded-sm shadow hover:shadow-md transition duration-300'>
             {/* w-full max-w-sm bg-white rounded-2xl overflow-hidden shadow hover:shadow-xl transition duration-300 border */}
@@ -15,7 +18,10 @@ const CourseCard = ({ title, description, price, image }) => {
                 {price && (
                     <p className='text-md font-bold text-green-600 mt-3'>₹{price}</p>
                 )}
-                <button className='mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition'>
+                <button
+                    onClick={() => navigate(`/coursedetails/${id}`)}
+                    className='mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition'
+                >
                     View Details
                 </button>
             </div>

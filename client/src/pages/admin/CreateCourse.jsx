@@ -1,0 +1,152 @@
+import { React, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+
+function CreateCourse() {
+    const navigate = useNavigate();
+    const { id } = useParams();
+
+    const [form, setForm] = useState({
+        title: '',
+        description: '',
+        price: '',
+        instructor: '',
+        image_url: '',
+    });
+
+    const isEdit = Boolean(id);
+
+    useEffect(() => {
+        if (isEdit) {
+            const fetchCourseDetails = async () => {
+                try {
+                    const res = await axios.get(`http://localhost:5003/api/courses/${id}`);
+                    const course = res.data;
+
+                    setForm({
+                        title: course.title || '',
+                        description: course.description || '',
+                        price: course.price || '',
+                        instructor: course.instructor || '',
+                        image_url: course.image_url || '',
+                    });
+                } catch (error) {
+                    console.error("Error fetching course:", error);
+                    alert("Failed to load course data");
+                }
+            };
+            fetchCourseDetails();
+        }
+    }, [id, isEdit]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prevForm) => ({
+            ...prevForm,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (isEdit) {
+                await axios.put(`http://localhost:5003/api/courses/${id}`, form);
+                alert('course updated successfulyy!!')
+                
+            } else {
+                await axios.post('http://localhost:5003/api/courses', form);
+                alert('course created successfulyy!!')
+            }
+            navigate("/admin");
+        } catch (error) {
+            console.error('error creating course:', error);
+            alert('something went wrong');
+        }
+    };
+
+    const handlecancel = () => {
+        navigate("/admin")
+    }
+
+
+    return (
+        <div className="min-h-screen bg-white p-8">
+            <button
+                onClick={handlecancel}
+                className='text-gray-600 hover:text-red-500 text-xl font-bold absolute right-10'
+            >
+                X
+            </button>
+            <h1 className='text-2xl font-semibold mb-4 text-center text-gray-800'>{isEdit ? 'Edit Course' : 'Create New Course'}</h1>
+            <form onSubmit={handleSubmit} className='space-y-5'>
+                <input
+                    type="text"
+                    name="title"
+                    value={form.title}
+                    onChange={handleChange}
+                    placeholder="Course Title"
+                    className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                />
+                <textarea
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    placeholder="Course Description"
+                    className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={4}
+                    required
+                />
+                <input
+                    type="number"
+                    name="price"
+                    value={form.price}
+                    onChange={handleChange}
+                    placeholder="Price (e.g., 49.99)"
+                    className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="0"
+                    step="0.01"
+                    required
+                />
+                <input
+                    type="text"
+                    name="instructor"
+                    value={form.instructor}
+                    onChange={handleChange}
+                    placeholder="Instructor Name"
+                    className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                />
+                <input
+                    type="url"
+                    name="image_url"
+                    value={form.image_url}
+                    onChange={handleChange}
+                    placeholder="Image URL"
+                    className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                />
+
+                <div className='flex justify-end gap-4'>
+                    <button
+                        type="button"
+                        onClick={handlecancel}
+                        className='bg-red-600 hover:bg-red-700 text-white py-2 px-6 rounded-md transition'
+                    >
+                        cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-5 rounded-md transition"
+                    >
+                        { isEdit ? 'Update Course' : 'Create Course'}
+                    </button>
+                </div>
+            </form>
+        </div>
+    )
+}
+
+export default CreateCourse;

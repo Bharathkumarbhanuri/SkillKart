@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaUser } from "react-icons/fa";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 export default function ProfileSidebar() {
   const [isOpen, setIsOpen] = useState(false); // controls sidebar visibility
   const sidebarRef = useRef(); // tracks the sidebar DOM node
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   // Detects click outside and closes the sidebar
   useEffect(() => {
@@ -16,6 +18,12 @@ export default function ProfileSidebar() {
     if (isOpen) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsOpen(false);
+    navigate("/");
+  };
 
   return (
     <>
@@ -58,24 +66,33 @@ export default function ProfileSidebar() {
           { to: "profile", label: "Profile" },
           { to: "cart", label: "Cart" },
           { to: "checkout", label: "Checkout" },
-          { to: "login", label: "Login" },
-          { to: "signup", label: "Signup" },
-          ].map(({ to, label }) => (
-            <li
-              key={to}
-              onClick={() => setIsOpen(false)}
-            >
-              <NavLink
-                to={to}
-                className={({ isActive }) =>
-                  `block px-6 py-4 text-gray-700 border-b transition-all duration-300 hover:bg-gray-100 hover:pl-8 ${isActive ? "text-blue-600 font-medium" : ""
-                  }`
-                }
-              >
-                {label}
-              </NavLink>
-            </li>
-          ))}
+          token
+            ? { to: "#", label: "Logout", action: handleLogout }
+            : { to: "login", label: "Login" },
+          // !token && { to: "signup", label: "Signup" }
+          ].filter(Boolean) // remove false entries
+            .map(({ to, label, action }) => (
+              <li key={to} onClick={() => setIsOpen(false)}>
+                {action ? (
+                  <button
+                    onClick={action}
+                    className="w-full text-left block px-6 py-4 text-gray-700 border-b transition-all duration-300 hover:bg-gray-100 hover:pl-8"
+                  >
+                    {label}
+                  </button>
+                ) : (
+                  <NavLink
+                    to={to}
+                    className={({ isActive }) =>
+                      `block px-6 py-4 text-gray-700 border-b transition-all duration-300 hover:bg-gray-100 hover:pl-8 ${isActive ? "text-blue-600 font-medium" : ""
+                      }`
+                    }
+                  >
+                    {label}
+                  </NavLink>
+                )}
+              </li>
+            ))}
         </ul>
       </div>
     </>
