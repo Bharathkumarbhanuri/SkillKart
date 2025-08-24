@@ -65,7 +65,8 @@ export default function ProfileSidebar() {
           {[{ to: "/", label: "Home" },
           { to: "profile", label: "Profile" },
           { to: "cart", label: "Cart" },
-          { to: "checkout", label: "Checkout" },
+          { to: "wishlist", label: "Wishlist" },
+          { to: "orders", label: "Orders" },
           token
             ? { to: "#", label: "Logout", action: handleLogout }
             : { to: "login", label: "Login" },

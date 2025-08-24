@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import axios from 'axios';
 
 function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [form, setForm] = useState({email: "", password: ""});
 
     const handleChange = (e) => {
@@ -17,11 +18,12 @@ function Login() {
             localStorage.setItem("token", res.data.token);
             
             alert('login successfull!!')
+            const redirectPath = location.state?.from || "/";
+            navigate(redirectPath, { replace: true });
         } catch (error) {
             console.error("Login error:", error);
             alert(error.response?.data?.message || "Login failed. Please try again.");
         }
-        navigate("/");
     }
 
     return (

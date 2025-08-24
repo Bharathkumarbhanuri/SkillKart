@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 function CourseDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showLoginModal, setShowLoginModal] = useState(false);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [id]);
 
     useEffect(() => {
         const fetchCourseDetails = async () => {
@@ -23,32 +30,53 @@ function CourseDetails() {
         fetchCourseDetails();
     }, [id]);
 
-    const requireLogin = (action) => {
+    const requireLogin = async (action) => {
         const token = localStorage.getItem("token");
         if (!token) {
-            alert("Please log in to continue");
-            navigate("/login");
-            return false;   
+            setShowLoginModal(true);
+            return false;
         }
-        // If logged in, perform the action
-        action();
+        try {
+            await action(token);
+        } catch (error) {
+            // If backend returns 401, token is expired or invalid
+            if (error.response?.status === 401) {
+                setShowLoginModal(true);
+            } else {
+                console.error(error);
+                alert(error.response?.data?.message || "Something went wrong. Please try again.");
+            }
+        }
+
     };
 
     const handleEnroll = () => {
-        requireLogin(() => {
-            console.log("Enroll API call for course ID:", id);
+        requireLogin(async (token) => {
+            await axios.post("http://localhost:5003/api/enroll",
+                { course_id: id },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            alert("Successfully enrolled!");
         });
     };
 
     const handleAddToCart = () => {
-        requireLogin(() => {
-            console.log("Add to cart API call for course ID:", id);
+        requireLogin(async (token) => {
+            await axios.post("http://localhost:5003/api/cart/add",
+                { course_id: id },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            alert("Added to cart!");
         });
     };
 
-     const handleAddToWishlist = () => {
-        requireLogin(() => {
-            console.log("Add to wishlist API call for course ID:", id);
+    const handleAddToWishlist = () => {
+        requireLogin(async (token) => {
+            await axios.post("http://localhost:5003/api/wishlist/add",
+                { course_id: id },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            alert("Added to wishlist!");
         });
     };
 
@@ -109,6 +137,28 @@ function CourseDetails() {
                     </div>
                 </div>
             </div>
+            {showLoginModal && (
+                <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]'>
+                    <div className='bg-white p-8 rounded-lg text-center'>
+                        <h2 className="text-xl font-semibold mb-2">Session Expired/Required</h2>
+                        <p className="mb-4">You need to log in to continue.</p>
+                        <div className="flex justify-between gap-4">
+                            <button
+                                onClick={()=> navigate("/")}
+                                className="bg-gray-300 py-2 px-2 rounded-lg hover:bg-gray-400 transition"
+                            >
+                                Back to Home
+                            </button>
+                            <button
+                                onClick={()=> navigate("/login", {state: {from: location.pathname + location.search}})}
+                                className="bg-blue-600 text-white py-2 px-8 rounded-lg hover:bg-blue-700 transition"
+                            >
+                                Login
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
