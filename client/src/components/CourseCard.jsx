@@ -5,16 +5,16 @@ import { useNavigate } from 'react-router-dom';
 const CourseCard = ({ id, title, description, price, image }) => {
     const navigate = useNavigate();
     return (
-        <div className='border p-4 rounded-sm shadow hover:shadow-md transition duration-300'>
+        <div className='border p-4 rounded-sm shadow hover:shadow-md transition duration-300 flex flex-col h-full'>
             {/* w-full max-w-sm bg-white rounded-2xl overflow-hidden shadow hover:shadow-xl transition duration-300 border */}
             <img
                 src={image}
                 alt={title}
                 className='w-full h-40 object-cover'
             />
-            <div className='p-4'>
-                <h3 className='text-xl font-semibold text-gray-800'>{title}</h3>
-                <p className='text-sm text-gray-600 line-clamp-2 mt-2'>{description}</p>
+            <div className='p-4 flex flex-col flex-grow'>
+                <h3 className='text-xl font-semibold text-gray-800 '>{title}</h3>
+                <p className='text-sm text-gray-600 line-clamp-3 mt-2 flex-grow'>{description}</p>
                 {price && (
                     <p className='text-md font-bold text-green-600 mt-3'>₹{price}</p>
                 )}

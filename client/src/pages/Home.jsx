@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import HeroSection from '../components/HeroSection'
 import CourseCard from '../components/CourseCard'
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
     const [loading, setLoading] = useState(true);
@@ -10,8 +11,11 @@ function Home() {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const res = await axios.get('http://localhost:5003/api/courses')
-                setCourses(res.data)
+                const res = await axios.get('http://localhost:5003/api/courses');
+                const sortedCourses = res.data.sort(
+                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                );
+                setCourses(sortedCourses.slice(0, 6));
             } catch (error) {
                 console.error('Failed to fetch courses:', error)
             } finally {
@@ -20,8 +24,10 @@ function Home() {
         }
 
         fetchCourses()
-    }, [])
+    }, []);
 
+    if (loading) return <p className="text-center mt-10 text-lg">Loading courses...</p>;
+    
     return (
         <div>
             <HeroSection />
@@ -34,8 +40,8 @@ function Home() {
                     <p className="text-center">Loading......wait</p>
                 ) : (
                     <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                        {courses.map((course)=>(
-                            <CourseCard 
+                        {courses.map((course) => (
+                            <CourseCard
                                 key={course.id}
                                 id={course.id}
                                 title={course.title}

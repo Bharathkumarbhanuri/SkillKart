@@ -12,12 +12,14 @@ import CreateCourse from './pages/admin/CreateCourse';
 import Home from './pages/Home';
 import CourseDetails from './pages/CourseDetails';
 import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
-import Orders from './pages/Orders';
 import Wishlist from './pages/Wishlist';
+import PaymentPage from './pages/PaymentPage';
+import MyCourses from './pages/MyCourses';
+import LearningPage from './pages/LearningPage';
+import Courses from './pages/Courses';
 
 
 const router = createBrowserRouter(
@@ -27,12 +29,14 @@ const router = createBrowserRouter(
         <Route index element={<Home />} />
         <Route path='coursedetails/:id' element={<CourseDetails />} />
         <Route path='cart' element={<Cart />} />
-        <Route path='checkout' element={<Checkout />} />
+        <Route path='courses' element={<Courses />} />
+        <Route path='learningpage/:id' element={<LearningPage />} />
         <Route path='login' element={<Login />} />
         <Route path='signup' element={<Signup />} />
         <Route path='profile' element={<Profile />} />
-        <Route path='orders' element={<Orders />} />
+        <Route path='mycourses' element={<MyCourses />} />
         <Route path='wishlist' element={<Wishlist />} />
+        <Route path='paymentpage' element={<PaymentPage />} />
       </Route>
 
       {/* admin section routes */}

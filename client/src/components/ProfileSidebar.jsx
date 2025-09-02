@@ -66,7 +66,7 @@ export default function ProfileSidebar() {
           { to: "profile", label: "Profile" },
           { to: "cart", label: "Cart" },
           { to: "wishlist", label: "Wishlist" },
-          { to: "orders", label: "Orders" },
+          { to: "mycourses", label: "MyCourses" },
           token
             ? { to: "#", label: "Logout", action: handleLogout }
             : { to: "login", label: "Login" },

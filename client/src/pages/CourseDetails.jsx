@@ -11,6 +11,10 @@ function CourseDetails() {
     const [loading, setLoading] = useState(true);
     const [showLoginModal, setShowLoginModal] = useState(false);
 
+    const [inCart, setInCart] = useState(false);
+    const [inWishlist, setInWishlist] = useState(false);
+    const [enrolled, setEnrolled] = useState(false);
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [id]);
@@ -20,6 +24,20 @@ function CourseDetails() {
             try {
                 const res = await axios.get(`http://localhost:5003/api/courses/${id}`);
                 setCourse(res.data);
+
+
+                const token = localStorage.getItem("token");
+                if (token) {
+                    const [cartRes, wishRes, enrollRes] = await Promise.all([
+                        axios.get("http://localhost:5003/api/cart/getcart", { headers: { Authorization: `Bearer ${token}` } }),
+                        axios.get("http://localhost:5003/api/wishlist/getwishlist", { headers: { Authorization: `Bearer ${token}` } }),
+                        axios.post("http://localhost:5003/api/enroll/check", { course_id: id }, { headers: { Authorization: `Bearer ${token}` } })
+                    ]);
+
+                    setInCart(cartRes.data.some(c => String(c.id) === String(id)));
+                    setInWishlist(wishRes.data.some(c => String(c.id) === String(id)));
+                    setEnrolled(enrollRes.data.enrolled === true);
+                }
             } catch (error) {
                 console.error("Error fetching course:", error);
                 alert("Failed to load course data");
@@ -52,11 +70,11 @@ function CourseDetails() {
 
     const handleEnroll = () => {
         requireLogin(async (token) => {
-            await axios.post("http://localhost:5003/api/enroll",
-                { course_id: id },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            alert("Successfully enrolled!");
+            if (!enrolled) {
+                navigate("/paymentpage", {
+                    state: { courseIds: [id] }, // always pass array
+                });
+            }
         });
     };
 
@@ -66,6 +84,7 @@ function CourseDetails() {
                 { course_id: id },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
+            setInCart(true);
             alert("Added to cart!");
         });
     };
@@ -76,6 +95,7 @@ function CourseDetails() {
                 { course_id: id },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
+            setInWishlist(true);
             alert("Added to wishlist!");
         });
     };
@@ -116,24 +136,46 @@ function CourseDetails() {
                         <p className="text-gray-700 leading-relaxed mb-6">{course.description}</p>
                     </div>
                     <div className="flex flex-wrap gap-3">
-                        <button
-                            onClick={handleEnroll}
-                            className='bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition'
-                        >
-                            Enroll Now
-                        </button>
-                        <button
-                            onClick={handleAddToCart}
-                            className='border border-gray-300 hover:bg-gray-100 py-2 px-4 rounded-lg font-medium transition'
-                        >
-                            add to cart
-                        </button>
-                        <button
-                            onClick={handleAddToWishlist}
-                            className='bg-teal-500 hover:bg-teal-600 text-white py-2 px-4 rounded-lg font-medium transition'
-                        >
-                            add to wishlist
-                        </button>
+                        {enrolled ? (
+                            <span className="bg-gray-400 text-white py-2 px-4 rounded-lg font-medium cursor-not-allowed">
+                                Enrolled
+                            </span>
+                        ) : (
+                            <button
+                                onClick={handleEnroll}
+                                className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition"
+                            >
+                                Enroll Now
+                            </button>
+                        )}
+                        {!enrolled && (
+                            <button
+                                onClick={handleAddToCart}
+                                disabled={inCart}
+                                className={`${inCart ? 'bg-gray-200 cursor-not-allowed' : 'border border-gray-300 hover:bg-gray-100'} py-2 px-4 rounded-lg font-medium transition`}
+                            >
+                                {inCart ? "In Cart" : "Add to Cart"}
+                            </button>
+                        )}
+
+                        {!enrolled && (
+                            <button
+                                onClick={handleAddToWishlist}
+                                disabled={inWishlist}
+                            className={`${inWishlist ? 'bg-gray-400 cursor-not-allowed' : 'bg-teal-500 hover:bg-teal-600'} text-white py-2 px-4 rounded-lg font-medium transition`}
+                            >
+                            {inWishlist ? "In Wishlist" : "Add to Wishlist"}
+                            </button>
+                        )}
+
+                        {enrolled && (
+                            <button
+                                onClick={() => navigate(`/learningpage/${id}`)}
+                                className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-medium transition"
+                            >
+                                View Course
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -144,13 +186,13 @@ function CourseDetails() {
                         <p className="mb-4">You need to log in to continue.</p>
                         <div className="flex justify-between gap-4">
                             <button
-                                onClick={()=> navigate("/")}
+                                onClick={() => navigate("/")}
                                 className="bg-gray-300 py-2 px-2 rounded-lg hover:bg-gray-400 transition"
                             >
                                 Back to Home
                             </button>
                             <button
-                                onClick={()=> navigate("/login", {state: {from: location.pathname + location.search}})}
+                                onClick={() => navigate("/login", { state: { from: location.pathname + location.search } })}
                                 className="bg-blue-600 text-white py-2 px-8 rounded-lg hover:bg-blue-700 transition"
                             >
                                 Login

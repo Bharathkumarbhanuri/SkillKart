@@ -12,6 +12,7 @@ function CreateCourse() {
         price: '',
         instructor: '',
         image_url: '',
+        videos: [],
     });
 
     const isEdit = Boolean(id);
@@ -29,6 +30,11 @@ function CreateCourse() {
                         price: course.price || '',
                         instructor: course.instructor || '',
                         image_url: course.image_url || '',
+                        videos: Array.isArray(course.videos)
+                            ? course.videos
+                            : course.videos
+                                ? [course.videos]
+                                : [],
                     });
                 } catch (error) {
                     console.error("Error fetching course:", error);
@@ -53,7 +59,7 @@ function CreateCourse() {
             if (isEdit) {
                 await axios.put(`http://localhost:5003/api/courses/${id}`, form);
                 alert('course updated successfulyy!!')
-                
+
             } else {
                 await axios.post('http://localhost:5003/api/courses', form);
                 alert('course created successfulyy!!')
@@ -68,6 +74,30 @@ function CreateCourse() {
     const handlecancel = () => {
         navigate("/admin")
     }
+
+    const handleVideoChange = (index, value) => {
+        const newVideos = [...form.videos];
+        newVideos[index] = value;
+        setForm((prevForm) => ({
+            ...prevForm,
+            videos: newVideos,
+        }));
+    };
+
+    const addVideoField = () => {
+        setForm((prevForm) => ({
+            ...prevForm,
+            videos: [...prevForm.videos, ""],
+        }));
+    };
+
+    const removeVideoField = (index) => {
+        const newVideos = form.videos.filter((_, i) => i !== index);
+        setForm((prevForm) => ({
+            ...prevForm,
+            videos: newVideos,
+        }));
+    };
 
 
     return (
@@ -128,6 +158,39 @@ function CreateCourse() {
                     required
                 />
 
+                {/* ✅ Videos Section */}
+                <div>
+                    <h2 className="text-lg font-semibold text-gray-700 mb-2">Course Videos (YouTube links)</h2>
+                    {form.videos.map((video, index) => (
+                        <div key={index} className="flex items-center gap-2 mb-2">
+                            <input
+                                type="url"
+                                value={video}
+                                onChange={(e) => handleVideoChange(index, e.target.value)}
+                                placeholder="Enter YouTube link"
+                                className="flex-1 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                            <button
+                                type="button"
+                                onClick={() => removeVideoField(index)}
+                                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    ))}
+
+                    <button
+                        type="button"
+                        onClick={addVideoField}
+                        className="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                    >
+                        + Add Video
+                    </button>
+                </div>
+
+                {/* cancel submit Buttons */}
                 <div className='flex justify-end gap-4'>
                     <button
                         type="button"
@@ -141,7 +204,7 @@ function CreateCourse() {
                         type="submit"
                         className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-5 rounded-md transition"
                     >
-                        { isEdit ? 'Update Course' : 'Create Course'}
+                        {isEdit ? 'Update Course' : 'Create Course'}
                     </button>
                 </div>
             </form>

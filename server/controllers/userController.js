@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { insertUser, fetchUserByEmail } = require('../models/userModel');
+const { insertUser, fetchUserByEmail , fetchUserById, updateUserById} = require('../models/userModel');
 
 const createUser = async (req, res) => {
     try {
@@ -63,4 +63,36 @@ const loginUser = async(req,res) => {
         res.status(500).json({error: 'Login failed'})
     }
 }
-module.exports = { createUser, loginUser };
+
+const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await fetchUserById(userId);
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+    console.log(user);
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ message: 'Failed to fetch profile' });
+  }
+};
+
+const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, email, phone, education } = req.body;
+
+    // profilePic handling (if using multer)
+    const profilePic = req.file ? req.file.filename : null;
+
+    await updateUserById(userId, { name, email, phone, education, profilePic });
+
+    res.json({ message: 'Profile updated successfully' });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Failed to update profile' });
+  }
+};
+
+module.exports = { createUser, loginUser, getUserProfile, updateUserProfile };

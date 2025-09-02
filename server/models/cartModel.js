@@ -45,6 +45,7 @@ const moveFromCartToList = async(user_id, course_id) => {
     } finally {
         conn.release();
     }
-}
+};
+
 
 module.exports = {insertToCart, fetchCart, removeFromCart, moveFromCartToList};

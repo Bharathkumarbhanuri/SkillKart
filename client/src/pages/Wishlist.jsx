@@ -1,11 +1,16 @@
-import React from 'react'
-import { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useSearchParams } from 'react-router-dom';
+
 
 function Wishlist() {
+    const [searchParams] = useSearchParams();
+    const query = searchParams.get('q')?.toLowerCase();
+
+
     const [wishlist, setWishlist] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [enrolledCourses, setEnrolledCourses] = useState([]);
 
 
     useEffect(() => {
@@ -16,10 +21,26 @@ function Wishlist() {
                     alert("Please login to view your wishlist");
                     return;
                 }
+
+                // 1. Fetch wishlist
                 const res = await axios.get('http://localhost:5003/api/wishlist/getwishlist', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                setWishlist(res.data);
+
+                // 2. Fetch all enrolled courses for the user
+                const enrolledRes = await axios.get('http://localhost:5003/api/enroll/enrolledcourses', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const enrolledIds = enrolledRes.data.map(c => c.id);
+                setEnrolledCourses(enrolledIds);
+
+                // 3. Mark courses in wishlist as enrolled
+                const updatedWishlist = res.data.map(course => ({
+                    ...course,
+                    enrolled: enrolledIds.includes(course.id)
+                }));
+
+                setWishlist(updatedWishlist);
             } catch (error) {
                 console.error("Failed to fetch wishlist:", error);
             } finally {
@@ -30,6 +51,10 @@ function Wishlist() {
         fetchWishlist();
     }, [])
 
+    const filteredWishlist = query
+        ? wishlist.filter(course => course.title.toLowerCase().includes(query))
+        : wishlist;
+
     const handleRemoveFromList = async (id) => {
         try {
             const token = localStorage.getItem("token");
@@ -38,9 +63,10 @@ function Wishlist() {
                 return;
             }
             const res = await axios.delete('http://localhost:5003/api/wishlist/delete',
-                { headers: { Authorization: `Bearer ${token}` } ,
-                data: { course_id: id }
-        });
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                    data: { course_id: id }
+                });
             setWishlist(prev => prev.filter(course => course.id !== id));
             alert("removed from wishlist!");
         } catch (error) {
@@ -55,7 +81,11 @@ function Wishlist() {
                 alert("Please login to view your cart");
                 return;
             }
-            const res = await axios.post('http://localhost:5003/api/wishlist/movetocart',
+
+            // Prevent moving enrolled courses to cart
+            if (enrolledCourses.includes(id)) return;
+
+            await axios.post('http://localhost:5003/api/wishlist/movetocart',
                 { course_id: id },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -66,7 +96,9 @@ function Wishlist() {
         }
     }
 
-    if (wishlist.length === 0) {
+    if (loading) return <p className="text-center mt-10 text-lg">Loading...</p>;
+
+    if (filteredWishlist.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center h-screen text-center">
                 <img
@@ -75,9 +107,9 @@ function Wishlist() {
                     className="w-40 mb-6 opacity-70"
                 />
                 <h2 className="text-2xl font-semibold text-gray-700 mb-2">
-                    Your wishlist is empty
+                    {query ? "No results found" : "Your wishlist is empty"}
                 </h2>
-                <p className="text-gray-500">Add courses to see them here later.</p>
+                {!query &&<p className="text-gray-500">Add courses to see them here later.</p>}
             </div>
         )
     }
@@ -86,9 +118,9 @@ function Wishlist() {
             <h1 className="text-4xl font-bold mb-8">My Wishlist</h1>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {wishlist.map((course, index) => (
+                {filteredWishlist.map((course) => (
                     <div
-                        key={index}
+                        key={course.id}
                         className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col"
                     >
                         <img
@@ -108,9 +140,10 @@ function Wishlist() {
                             <div className="mt-4 flex gap-3">
                                 <button
                                     onClick={() => handleMoveToCart(course.id)}
+                                    disabled={course.enrolled}
                                     className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition"
                                 >
-                                    Move to Cart
+                                    {course.enrolled ? "Enrolled" : "Move to Cart"}
                                 </button>
                                 <button
                                     onClick={() => handleRemoveFromList(course.id)}
