@@ -11,7 +11,7 @@ function Home() {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const res = await axios.get('${process.env.REACT_APP_API_URL}/api/courses');
+                const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/courses`);
                 const sortedCourses = res.data.sort(
                     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
                 );
