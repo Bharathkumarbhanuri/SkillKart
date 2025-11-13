@@ -3,6 +3,7 @@ import HeroSection from '../components/HeroSection'
 import CourseCard from '../components/CourseCard'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from '../config';
 
 function Home() {
     const [loading, setLoading] = useState(true);

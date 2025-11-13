@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import API_BASE_URL from '../config';
 
 function LearningPage() {
     const { id } = useParams();
