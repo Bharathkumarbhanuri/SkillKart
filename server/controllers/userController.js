@@ -4,7 +4,8 @@ const { insertUser, fetchUserByEmail , fetchUserById, updateUserById} = require(
 
 const createUser = async (req, res) => {
     try {
-        const { name, email, password, confirmPassword } = req.body;
+        const { name, password, confirmPassword } = req.body;
+        let { email } = req.body;
 
         if (!name || !email || !password) {
             return res.status(400).json({ message: 'All fields are required' });
