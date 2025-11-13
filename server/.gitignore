@@ -1,0 +1,34 @@
+# --- Dependencies ---
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# --- Builds ---
+dist/
+dist-ssr/
+client/dist/
+server/dist/
+api/dist/
+client/.env*
+server/.env*
+api/.env*
+.env*
+!.env.example   # keep only the example
+
+# --- Logs ---
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# --- Editors ---
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# --- OS ---
+Thumbs.db
