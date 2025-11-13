@@ -21,7 +21,7 @@ function CreateCourse() {
         if (isEdit) {
             const fetchCourseDetails = async () => {
                 try {
-                    const res = await axios.get(`http://localhost:5003/api/courses/${id}`);
+                    const res = await axios.get(`${API_BASE_URL}/api/courses/${id}`);
                     const course = res.data;
 
                     setForm({
@@ -57,11 +57,11 @@ function CreateCourse() {
         e.preventDefault();
         try {
             if (isEdit) {
-                await axios.put(`http://localhost:5003/api/courses/${id}`, form);
+                await axios.put(`${API_BASE_URL}/api/courses/${id}`, form);
                 alert('course updated successfulyy!!')
 
             } else {
-                await axios.post('http://localhost:5003/api/courses', form);
+                await axios.post(`${API_BASE_URL}/api/courses`, form);
                 alert('course created successfulyy!!')
             }
             navigate("/admin");

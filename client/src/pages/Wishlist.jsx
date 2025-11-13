@@ -23,12 +23,12 @@ function Wishlist() {
                 }
 
                 // 1. Fetch wishlist
-                const res = await axios.get('http://localhost:5003/api/wishlist/getwishlist', {
+                const res = await axios.get(`${API_BASE_URL}/api/wishlist/getwishlist`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
                 // 2. Fetch all enrolled courses for the user
-                const enrolledRes = await axios.get('http://localhost:5003/api/enroll/enrolledcourses', {
+                const enrolledRes = await axios.get(`${API_BASE_URL}/api/enroll/enrolledcourses`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const enrolledIds = enrolledRes.data.map(c => c.id);
@@ -62,7 +62,7 @@ function Wishlist() {
                 alert("Please login to view your cart");
                 return;
             }
-            const res = await axios.delete('http://localhost:5003/api/wishlist/delete',
+            const res = await axios.delete(`${API_BASE_URL}/api/wishlist/delete`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                     data: { course_id: id }
@@ -85,7 +85,7 @@ function Wishlist() {
             // Prevent moving enrolled courses to cart
             if (enrolledCourses.includes(id)) return;
 
-            await axios.post('http://localhost:5003/api/wishlist/movetocart',
+            await axios.post(`${API_BASE_URL}/api/wishlist/movetocart`,
                 { course_id: id },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

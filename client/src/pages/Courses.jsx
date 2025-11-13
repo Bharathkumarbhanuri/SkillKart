@@ -14,10 +14,10 @@ function Courses() {
       setLoading(true);
       try {
         if (query) {
-          const res = await axios.get(`http://localhost:5003/api/search?context=courses&q=${query}`);
+          const res = await axios.get(`${API_BASE_URL}/api/search?context=courses&q=${query}`);
           setCourses(res.data.results || []);
         } else {
-          const res = await axios.get('http://localhost:5003/api/courses');
+          const res = await axios.get(`${API_BASE_URL}/api/courses`);
         setCourses(res.data || []);
         }
       } catch (error) { 

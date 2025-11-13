@@ -11,7 +11,7 @@ function CourseList() {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const res = await axios.get('http://localhost:5003/api/courses');
+                const res = await axios.get(`${API_BASE_URL}/api/courses`);
                 setCourses(res.data);
             } catch (error) {
                 console.log("error fetching courses:", error);
@@ -26,7 +26,7 @@ function CourseList() {
 
     const handleDelete = async (courseId) => {
         try {
-            const res = await axios.delete(`http://localhost:5003/api/courses/${courseId}`);
+            const res = await axios.delete(`${API_BASE_URL}/api/courses/${courseId}`);
             setCourses((prev) => prev.filter((course) => course.id !== courseId))
             console.log(res.status);
         } catch (error) {

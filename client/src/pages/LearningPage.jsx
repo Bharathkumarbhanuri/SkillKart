@@ -18,7 +18,7 @@ function LearningPage() {
                     return;
                 }
                 const enrollRes = await axios.post(
-                    "http://localhost:5003/api/enroll/check",
+                    `${API_BASE_URL}/api/enroll/check`,
                     { course_id: id },
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
@@ -28,7 +28,7 @@ function LearningPage() {
                 }
                 setEnrolled(true);
 
-                const res = await axios.get(`http://localhost:5003/api/courses/${id}`, {
+                const res = await axios.get(`${API_BASE_URL}/api/courses/${id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 

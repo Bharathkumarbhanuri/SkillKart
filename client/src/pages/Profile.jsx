@@ -21,13 +21,13 @@ function Profile() {
           return;
         }
 
-        const res = await axios.get('http://localhost:5003/api/users/profile', {
+        const res = await axios.get(`${API_BASE_URL}/api/users/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         // If profilePic exists, prepend server URL
         if (res.data.profilePic) {
-          res.data.profilePic = `http://localhost:5003/uploads/profilePics/${res.data.profilePic}`;
+          res.data.profilePic = `${API_BASE_URL}/uploads/profilePics/${res.data.profilePic}`;
         }
 
         setUser(res.data);
@@ -66,19 +66,19 @@ function Profile() {
         formData.append("profilePic", user.profilePic);
       }
 
-      const res = await axios.put('http://localhost:5003/api/users/profile', formData, {
+      const res = await axios.put(`${API_BASE_URL}/api/users/profile`, formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
 
       alert("Profile updated successfully!");
 
       // Refetch user after update to get server image URL
-      const refreshed = await axios.get('http://localhost:5003/api/users/profile', {
+      const refreshed = await axios.get(`${API_BASE_URL}/api/users/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
       if (refreshed.data.profilePic) {
-        refreshed.data.profilePic = `http://localhost:5003/uploads/profilePics/${refreshed.data.profilePic}`;
+        refreshed.data.profilePic = `${API_BASE_URL}/uploads/profilePics/${refreshed.data.profilePic}`;
       }
 
       setUser(refreshed.data);

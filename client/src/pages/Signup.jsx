@@ -19,7 +19,7 @@ function Signup() {
         }
 
         try {
-            await axios.post('http://localhost:5003/api/users/signup', form);
+            await axios.post(`${API_BASE_URL}/api/users/signup`, form);
             alert('user created successfulyy!!')
             navigate("/login")
         } catch (error) {

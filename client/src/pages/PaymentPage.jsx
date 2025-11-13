@@ -19,7 +19,7 @@ function PaymentPage() {
 
         const fetchCourses = async () => {
             try {
-                const res = await axios.get(`http://localhost:5003/api/courses/bulk?ids=${courseIds.join(",")}`
+                const res = await axios.get(`${API_BASE_URL}/api/courses/bulk?ids=${courseIds.join(",")}`
                 );
                 const data = Array.isArray(res.data) ? res.data : [res.data];
                 setCourses(data);
@@ -38,7 +38,7 @@ function PaymentPage() {
             const token = localStorage.getItem("token");
 
             // 1. Create order
-            const res = await axios.post("http://localhost:5003/api/payment/create-order",
+            const res = await axios.post(`${API_BASE_URL}/api/payment/create-order`,
                 { courses: courseIds },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -57,7 +57,7 @@ function PaymentPage() {
                     try {
                         // 3. Verify payment
                         await axios.post(
-                            "http://localhost:5003/api/payment/verify",
+                            `${API_BASE_URL}/api/payment/verify`,
                             {
                                 razorpay_payment_id: response.razorpay_payment_id,
                                 razorpay_order_id: response.razorpay_order_id,

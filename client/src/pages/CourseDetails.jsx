@@ -22,16 +22,16 @@ function CourseDetails() {
     useEffect(() => {
         const fetchCourseDetails = async () => {
             try {
-                const res = await axios.get(`http://localhost:5003/api/courses/${id}`);
+                const res = await axios.get(`${API_BASE_URL}/api/courses/${id}`);
                 setCourse(res.data);
 
 
                 const token = localStorage.getItem("token");
                 if (token) {
                     const [cartRes, wishRes, enrollRes] = await Promise.all([
-                        axios.get("http://localhost:5003/api/cart/getcart", { headers: { Authorization: `Bearer ${token}` } }),
-                        axios.get("http://localhost:5003/api/wishlist/getwishlist", { headers: { Authorization: `Bearer ${token}` } }),
-                        axios.post("http://localhost:5003/api/enroll/check", { course_id: id }, { headers: { Authorization: `Bearer ${token}` } })
+                        axios.get(`${API_BASE_URL}/api/cart/getcart`, { headers: { Authorization: `Bearer ${token}` } }),
+                        axios.get(`${API_BASE_URL}/api/wishlist/getwishlist`, { headers: { Authorization: `Bearer ${token}` } }),
+                        axios.post(`${API_BASE_URL}/api/enroll/check`, { course_id: id }, { headers: { Authorization: `Bearer ${token}` } })
                     ]);
 
                     setInCart(cartRes.data.some(c => String(c.id) === String(id)));
@@ -80,7 +80,7 @@ function CourseDetails() {
 
     const handleAddToCart = () => {
         requireLogin(async (token) => {
-            await axios.post("http://localhost:5003/api/cart/add",
+            await axios.post(`${API_BASE_URL}/api/cart/add`,
                 { course_id: id },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -91,7 +91,7 @@ function CourseDetails() {
 
     const handleAddToWishlist = () => {
         requireLogin(async (token) => {
-            await axios.post("http://localhost:5003/api/wishlist/add",
+            await axios.post(`${API_BASE_URL}/api/wishlist/add`,
                 { course_id: id },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

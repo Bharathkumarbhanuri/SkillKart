@@ -22,7 +22,7 @@ function MyCourses() {
                     setLoading(false);
                     return;
                 }
-                const res = await axios.get('http://localhost:5003/api/enroll/enrolledcourses',
+                const res = await axios.get(`${API_BASE_URL}/api/enroll/enrolledcourses`,
                     { headers: { Authorization: `Bearer ${token}` } });
                 console.log("Enrolled courses API:", res.data);
                 setCourses(res.data)

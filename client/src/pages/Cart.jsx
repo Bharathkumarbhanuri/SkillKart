@@ -22,7 +22,7 @@ function Cart() {
                     setLoading(false);
                     return;
                 }
-                const res = await axios.get('http://localhost:5003/api/cart/getcart',
+                const res = await axios.get(`${API_BASE_URL}/api/cart/getcart`,
                     { headers: { Authorization: `Bearer ${token}` } });
                 setCart(res.data)
             } catch (error) {
@@ -45,7 +45,7 @@ function Cart() {
                 alert("Please login to view your cart");
                 return;
             }
-            const res = await axios.delete('http://localhost:5003/api/cart/delete',
+            const res = await axios.delete(`${API_BASE_URL}/api/cart/delete`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                     data: { course_id: id }
@@ -64,7 +64,7 @@ function Cart() {
                 alert("Please login to view your cart");
                 return;
             }
-            const res = await axios.post('http://localhost:5003/api/cart/movetowishlist',
+            const res = await axios.post(`${API_BASE_URL}/api/cart/movetowishlist`,
                 { course_id: id },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
