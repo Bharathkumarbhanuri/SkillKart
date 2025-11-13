@@ -1,5 +1,6 @@
 const { insertToCart, fetchCart, removeFromCart, moveFromCartToList } = require('../models/cartModel');
-const { check } = require('../models/enrollmentModel');
+const { checkEnrollment } = require('../models/enrollmentModel');
+
 
 const addToCart = async (req, res) => {
     try {
