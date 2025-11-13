@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import axios from 'axios';
-import API_BASE_URL from '../config';
+import { API_BASE_URL } from '../config';
 
 function Login() {
     const navigate = useNavigate();

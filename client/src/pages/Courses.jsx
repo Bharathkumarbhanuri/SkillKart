@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import CourseCard from '../components/CourseCard';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import API_BASE_URL from '../config';
+import { API_BASE_URL } from '../config';
 
 function Courses() {
   const [searchParams] = useSearchParams();
