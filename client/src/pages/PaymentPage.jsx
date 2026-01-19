@@ -8,6 +8,7 @@ function PaymentPage() {
     const { state } = useLocation();
     const navigate = useNavigate();
     const courseIds = state?.courseIds || [];
+    const IS_DUMMY = import.meta.env.VITE_PAYMENT_MODE === "DUMMY";
 
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -43,10 +44,26 @@ function PaymentPage() {
                 { courses: courseIds },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            const { order } = res.data;
+            const { order, dummy } = res.data;
 
-            // 2. Open Razorpay checkout
+            // ✅ Dummy mode: skip Razorpay popup and directly verify + enroll
+            if (IS_DUMMY || dummy === true) {
+                await axios.post(
+                    `${API_BASE_URL}/api/payment/verify`,
+                    {
+                        dummy: true,
+                        razorpay_order_id: order?.id || `dummy_order_${Date.now()}`,
+                        razorpay_payment_id: `dummy_payment_${Date.now()}`,
+                        courses: courseIds,
+                    },
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                alert("Enrolled successfully (Dummy Payment).");
+                navigate("/mycourses");
+                return;
+            }
 
+            // 2. real Razorpay checkout
             const options = {
                 key: import.meta.env.VITE_RAZORPAY_KEY_ID, // from env
                 amount: order.amount,
@@ -115,7 +132,7 @@ function PaymentPage() {
                 onClick={handleConfirmPayment}
                 className="bg-purple-600 text-white w-full py-2 mt-6 rounded-lg"
             >
-                Pay & Enroll
+                {IS_DUMMY ? "Enroll Now" : "Pay & Enroll"}
             </button>
         </div>
     );
