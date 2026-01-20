@@ -6,6 +6,12 @@ const enrollCourse = async(user_id, course_id) => {
     await db.query(query,[user_id, course_id]);
 };
 
+const getCourseTitleandPrice = async(course_id) => {
+    const query = `SELECT title, price FROM courses WHERE id = ?`;
+    const [rows] = await db.query(query,[course_id]);
+    return rows[0];
+};
+
 const checkEnrollment = async(user_id, course_id) => {
     const query = `SELECT * FROM enrollments WHERE user_id = ? AND course_id = ?`;
     const [rows] = await db.query(query,[user_id, course_id]);
@@ -20,4 +26,4 @@ const fetchEnrolledCourses  = async(user_id) => {
     return rows;
 };
 
-module.exports = { enrollCourse, checkEnrollment, fetchEnrolledCourses};
+module.exports = { enrollCourse, getCourseTitleandPrice, checkEnrollment, fetchEnrolledCourses};
